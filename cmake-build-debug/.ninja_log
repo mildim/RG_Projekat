@@ -1,0 +1,15 @@
+# ninja log v5
+1	444	1638619108176028425	libs/glad/CMakeFiles/glad.dir/src/glad.c.o	212a0175f38e9266
+444	507	1638619108240028427	libs/glad/libglad.a	388129d1c7333f3c
+507	1322	1638619109052028456	libs/imgui/CMakeFiles/imgui.dir/src/imgui_impl_glfw.cpp.o	e89046a8dd91a972
+1322	2175	1638619109904028487	libs/imgui/CMakeFiles/imgui.dir/src/imgui_impl_opengl3.cpp.o	4e9392927fe04f94
+2175	8801	1638619116528028723	libs/imgui/CMakeFiles/imgui.dir/src/imgui_tables.cpp.o	83fa740a21df8524
+0	10511	1638619118232028783	CMakeFiles/project_base.dir/src/main.cpp.o	4d6043e4a8d9af07
+1	11467	1638619119184028817	libs/imgui/CMakeFiles/imgui.dir/src/imgui_demo.cpp.o	edfe20ff4e0d4fae
+2	14321	1638619122044028919	libs/imgui/CMakeFiles/imgui.dir/src/imgui_draw.cpp.o	81fb31d391e87b92
+1	15929	1638619123652028976	CMakeFiles/STB_IMAGE.dir/libs/stb_image.cpp.o	fbbf35632d024bc1
+15929	15944	1638619123672028977	libSTB_IMAGE.a	2d6fbf31d33474ab
+1	18097	1638619125820029053	libs/imgui/CMakeFiles/imgui.dir/src/imgui.cpp.o	3825f761305093ce
+8801	19361	1638619127088029099	libs/imgui/CMakeFiles/imgui.dir/src/imgui_widgets.cpp.o	208da280d3beb0a7
+19361	19483	1638619127172029102	libs/imgui/libimgui.a	3fa9e52a52dc7561
+19483	19738	1638619127468029112	../project_base	be3282c70cb1b264
