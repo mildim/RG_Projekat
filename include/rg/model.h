@@ -14,6 +14,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <rg/Error.h>
+unsigned int TextureFromFile(const char* filename, std::string directory);
 class Model {
 public:
     std::vector<Mesh> meshes;
@@ -91,7 +92,7 @@ private:
             vertices.push_back(vertex);
         }
 
-        for (unsigned int i = 0; i < mesh->mFaces; ++i) {
+        for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
             aiFace face = mesh->mFaces[i];
 
             for (unsigned int j = 0; j < face.mNumIndices; ++j) {
@@ -170,7 +171,7 @@ unsigned int TextureFromFile(const char* filename, std::string directory) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     } else {
         ASSERT(false, "Failed to load texture image");

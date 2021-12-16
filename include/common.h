@@ -15,5 +15,10 @@ std::string readFileContents(std::string path) {
     return buffer.str();
 }
 
-
+void appendShaderFolderIfNotPresent(std::string& path) {
+    std::ifstream file(path);
+    if (!file) {
+        path = "resources/shaders/" + path;
+    }
+}
 #endif //PROJECT_BASE_COMMON_H
