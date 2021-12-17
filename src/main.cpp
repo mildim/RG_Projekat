@@ -235,9 +235,12 @@ int main() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
     // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, attachments);
-    // finally check if framebuffer is complete
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffers[0], 0); //<=
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);//<=
+    // check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -331,6 +334,15 @@ int main() {
                     FileSystem::getPath("resources/textures/skybox1/front.jpg"),
                     FileSystem::getPath("resources/textures/skybox1/back.jpg"),
             };
+//    vector<std::string> faces
+//            {
+//                    FileSystem::getPath("resources/textures/skybox/right.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox/left.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox/top.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox/bottom.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox/front.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox/back.jpg"),
+//            };
     unsigned int cubemapTexture = loadCubemap(faces);
 
     skyboxShader.use();
@@ -401,6 +413,13 @@ int main() {
 
         // don't forget to enable shader before setting uniforms
         ourShader.use();
+        // view/projection transformations
+        glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
+                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = programState->camera.GetViewMatrix();
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
+
         ourShader.setVec3("viewPosition", programState->camera.Position);
         ourShader.setFloat("material.shininess", 32.0f);
         // directional light
@@ -444,12 +463,7 @@ int main() {
             ourShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
         }
 
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = programState->camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+
 
 
         // render the loaded models
@@ -524,14 +538,14 @@ int main() {
         //draw big orbiting diamonds
         modelDiamond = glm::mat4(1.0f);
         modelDiamond = glm::translate(modelDiamond,
-                                      glm::vec3(-1.5f,120.6f,1.0f) +6.6f*glm::vec3(sin(time), sin(time)/10.0f+0.2f, cos(time)));
+                                      glm::vec3(-1.5f,120.6f,1.0f) +6.6f*glm::vec3(sin(1.5f*time), sin(time)/10.0f+0.2f, cos(1.5f*time)));
         modelDiamond = glm::scale(modelDiamond, glm::vec3(1.5f));
         ourShader.setMat4("model", modelDiamond);
         ourModelCrystal.Draw(ourShader);
 
         modelDiamond1 = glm::mat4(1.0f);
         modelDiamond1 = glm::translate(modelDiamond1,
-                                       glm::vec3(-1.5f,120.6f,1.0f) +6.6f*glm::vec3(sin(time), sin(time)/10.0f+0.2f, cos(2.5f*time)));
+                                       glm::vec3(-1.5f,120.6f,1.0f) +6.6f*glm::vec3(sin(1.5f*time), sin(time)/10.0f+0.2f, cos(1.5f*time)));
         modelDiamond1 = glm::scale(modelDiamond1, glm::vec3(1.5f));
         ourShader.setMat4("model", modelDiamond1);
         ourModelCrystal.Draw(ourShader);
@@ -627,7 +641,6 @@ int main() {
         shaderBloomFinal.setFloat("exposure", exposure);
         renderQuad();
 
-        std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
         //Phisics
         //---------------------------------------
         //teleport
