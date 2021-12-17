@@ -357,8 +357,8 @@ int main() {
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6); //==> Svetlost iz nekog izvora koji je blizu
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0); //==> Simulira deo koji se presijava
 
-    pointLight.constant = 0.4f;
-    pointLight.linear = 0.3f;
+    pointLight.constant = 0.05f;
+    pointLight.linear = 0.25f;
     pointLight.quadratic = 0.032f;
 
 
@@ -581,7 +581,7 @@ int main() {
         modelCrystal = glm::scale(modelCrystal, glm::vec3(1.0f));
         modelCrystal = glm::rotate(modelCrystal, time*5.0f, glm::vec3(0.1f ,1.0f, 0.0f)); //Rotiramo oko y ose
         lightSourceShader.setMat4("model", modelCrystal);
-        lightSourceShader.setVec3("lightColor", glm::vec3(1.0f,0.8f,0.8f));
+        lightSourceShader.setVec3("lightColor", glm::vec3(1.0f,1.0f,1.0f));
         ourModelCrystal.Draw(lightSourceShader);
 
         modelCrystal = glm::mat4(1.0f);
@@ -589,7 +589,7 @@ int main() {
         modelCrystal = glm::scale(modelCrystal, glm::vec3(1.0f));
         modelCrystal = glm::rotate(modelCrystal, time*5.0f, glm::vec3(0.1f ,1.0f, 0.0f)); //Rotiramo oko y ose
         lightSourceShader.setMat4("model", modelCrystal);
-        lightSourceShader.setVec3("lightColor", glm::vec3(1.0f,0.8f,0.8f));
+        lightSourceShader.setVec3("lightColor", glm::vec3(1.0f,1.0f,1.0f));
         ourModelCrystal.Draw(lightSourceShader);
 
 
