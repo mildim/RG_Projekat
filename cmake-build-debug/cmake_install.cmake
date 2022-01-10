@@ -1,4 +1,4 @@
-# Install script for directory: /home/milan/Desktop/RG/RG_Projekat/rome_teleport
+# Install script for directory: /home/milan/Desktop/RG/Backup/RG_Projekat
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,8 +44,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/milan/Desktop/RG/RG_Projekat/rome_teleport/cmake-build-debug/libs/glad/cmake_install.cmake")
-  include("/home/milan/Desktop/RG/RG_Projekat/rome_teleport/cmake-build-debug/libs/imgui/cmake_install.cmake")
+  include("/home/milan/Desktop/RG/Backup/RG_Projekat/cmake-build-debug/libs/glad/cmake_install.cmake")
+  include("/home/milan/Desktop/RG/Backup/RG_Projekat/cmake-build-debug/libs/imgui/cmake_install.cmake")
 
 endif()
 
@@ -57,5 +57,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/milan/Desktop/RG/RG_Projekat/rome_teleport/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/milan/Desktop/RG/Backup/RG_Projekat/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

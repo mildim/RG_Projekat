@@ -1,4 +1,4 @@
-# Install script for directory: /home/milan/Desktop/RG/RG_Projekat/rome_teleport/libs/glad
+# Install script for directory: /home/milan/Desktop/RG/Backup/RG_Projekat/libs/glad
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

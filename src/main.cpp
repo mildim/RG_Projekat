@@ -39,10 +39,12 @@ void renderQuad();
 
 
 // settings
-const unsigned int SCR_WIDTH = 1600;
-const unsigned int SCR_HEIGHT = 900;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
 bool godMode = false;
 bool spotlightOn = true;
+bool bg_change = false;
+bool bg_changen = false;
 
 bool bloom = true;
 bool bloomKeyPressed = false;
@@ -74,6 +76,7 @@ struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     glm::vec3 dirLightDir = glm::vec3(-0.2f, -1.0f, -0.3f);
     glm::vec3 dirLightAmbDiffSpec = glm::vec3(0.3f, 0.3f,0.2f);
+    glm::vec3 vrctor3 = glm::vec3(-20.0f, 8.0f,-2.0f);
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
@@ -81,6 +84,10 @@ struct ProgramState {
     float backpackScale = 1.0f;
     float objectRotateAngle = 0.0f;
     float fineCalibrate = 0.0f;
+    //test
+    vector<std::string> faces;
+    unsigned int cubemapTexture;
+    //-----
     PointLight pointLight;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
@@ -209,12 +216,12 @@ int main() {
     ourModelStonehenge.SetShaderTextureNamePrefix("material.");
 
     //Bloom-------------------------------------------------------------------------------------------------------------
-    // configure (floating point) framebuffers
+    // configure framebuffers
     // ---------------------------------------
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
+    // create 2 color buffers (1 for normal rendering, other for brightness threshold values)
     unsigned int colorBuffers[2];
     glGenTextures(2, colorBuffers);
     for (unsigned int i = 0; i < 2; i++)
@@ -325,7 +332,7 @@ int main() {
 
     // load textures for skybox
     // -------------------------------------------------------------------------------------------
-    vector<std::string> faces
+    programState->faces =
             {
                     FileSystem::getPath("resources/textures/skybox1/right.jpg"),
                     FileSystem::getPath("resources/textures/skybox1/left.jpg"),
@@ -334,16 +341,8 @@ int main() {
                     FileSystem::getPath("resources/textures/skybox1/front.jpg"),
                     FileSystem::getPath("resources/textures/skybox1/back.jpg"),
             };
-//    vector<std::string> faces
-//            {
-//                    FileSystem::getPath("resources/textures/skybox/right.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox/left.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox/top.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox/bottom.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox/front.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox/back.jpg"),
-//            };
-    unsigned int cubemapTexture = loadCubemap(faces);
+
+    programState->cubemapTexture = loadCubemap(programState->faces);
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
@@ -372,8 +371,6 @@ int main() {
     shaderBloomFinal.use();
     shaderBloomFinal.setInt("scene", 0);
     shaderBloomFinal.setInt("bloomBlur", 1);
-    // draw in wireframe <==Jako zanimljivo izgleda
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     // -----------
@@ -406,12 +403,12 @@ int main() {
         glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 1. render scene into floating point framebuffer
+        //render scene into floating point framebuffer
         // -----------------------------------------------BLOOM
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // don't forget to enable shader before setting uniforms
+        // enable shader before setting uniforms
         ourShader.use();
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
@@ -428,8 +425,7 @@ int main() {
         ourShader.setVec3("dirLight.diffuse", glm::vec3(programState->dirLightAmbDiffSpec.y));
         ourShader.setVec3("dirLight.specular", glm::vec3(programState->dirLightAmbDiffSpec.z));
 
-        //pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
-        ourShader.setVec3("pointLights[0].position", glm::vec3(-6.3f ,0.8f, -22.4f));
+        ourShader.setVec3("pointLights[0].position", programState->vrctor3);
         ourShader.setVec3("pointLights[0].ambient", pointLight.ambient);
         ourShader.setVec3("pointLights[0].diffuse", pointLight.diffuse);
         ourShader.setVec3("pointLights[0].specular", pointLight.specular);
@@ -465,7 +461,6 @@ int main() {
 
 
 
-
         // render the loaded models
         //---------------------------------------------------------------------------------
         //raw Rome
@@ -473,7 +468,6 @@ int main() {
         model = glm::translate(model,glm::vec3 (0.0f));
         model = glm::scale(model, glm::vec3(0.06f));
         model = glm::rotate(model,glm::radians(195.0f), glm::vec3(0.0f ,1.0f, 0.0f));
-        //model = glm::rotate(model,glm::radians(programState->objectRotateAngle), glm::vec3(0.0f ,1.0f, 0.0f));
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
@@ -571,7 +565,6 @@ int main() {
         ourModelStonehenge.Draw(ourShader);
 
         //--------------------------LIGHT-----------------------------------
-
         //draw Crystal
         lightSourceShader.use();
         lightSourceShader.setMat4("projection", projection);
@@ -592,8 +585,6 @@ int main() {
         lightSourceShader.setVec3("lightColor", glm::vec3(1.0f,1.0f,1.0f));
         ourModelCrystal.Draw(lightSourceShader);
 
-
-
         // draw skybox as last
         //-------------------------------------------------------------------------------------------------------------------
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -604,7 +595,7 @@ int main() {
         // skybox cube
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, programState->cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
@@ -612,10 +603,10 @@ int main() {
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
 
-        // 2. blur bright fragments with two-pass Gaussian Blur
+        // blur bright fragments with two-pass Gaussian Blur
         // --------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 10;
+        unsigned int amount = 5;
         shaderBlur.use();
         for (unsigned int i = 0; i < amount; i++)
         {
@@ -629,7 +620,7 @@ int main() {
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
+        // now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
         // --------------------------------------------------------------------------------------------------------------------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderBloomFinal.use();
@@ -654,8 +645,6 @@ int main() {
             programState->camera.Position = glm::vec3(1.0f,1.0f,-4.0f);
         }
 
-
-
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -669,6 +658,7 @@ int main() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
@@ -720,7 +710,7 @@ bool circleColision(glm::vec3 c,glm::vec3 x,float r){
     else return false;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// process all input
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -738,6 +728,67 @@ void processInput(GLFWwindow *window) {
 void processInput1(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if(glfwGetKey(window, GLFW_KEY_O)==GLFW_PRESS){
+        bg_change = !bg_change;
+        //Changing background
+        if(bg_change){
+            programState->dirLightAmbDiffSpec= glm::vec3(0.35f,0.2f,0.8f);
+
+            programState->faces =
+                    {
+                            FileSystem::getPath("resources/textures/skybox/right.jpg"),
+                            FileSystem::getPath("resources/textures/skybox/left.jpg"),
+                            FileSystem::getPath("resources/textures/skybox/top.jpg"),
+                            FileSystem::getPath("resources/textures/skybox/bottom.jpg"),
+                            FileSystem::getPath("resources/textures/skybox/front.jpg"),
+                            FileSystem::getPath("resources/textures/skybox/back.jpg"),
+                    };
+            programState->cubemapTexture = loadCubemap(programState->faces);
+        }else {
+            programState->dirLightAmbDiffSpec= glm::vec3(0.25f,0.45f,0.6f);
+
+            programState->faces = {
+                    FileSystem::getPath("resources/textures/skybox1/right.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/left.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/top.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/bottom.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/front.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/back.jpg"),
+        };
+            programState->cubemapTexture = loadCubemap(programState->faces);
+        }
+    }
+    if(glfwGetKey(window, GLFW_KEY_N)==GLFW_PRESS){
+        bg_changen = !bg_changen;
+        //Changing background
+        if(bg_changen){
+            programState->dirLightAmbDiffSpec= glm::vec3(0.01f,0.01f,0.3f);
+
+            programState->faces =
+                    {
+                            FileSystem::getPath("resources/textures/skyboxn/right.jpg"),
+                            FileSystem::getPath("resources/textures/skyboxn/left.jpg"),
+
+                            FileSystem::getPath("resources/textures/skyboxn/top.jpg"),
+                            FileSystem::getPath("resources/textures/skyboxn/bottom.jpg"),
+                            FileSystem::getPath("resources/textures/skyboxn/front.jpg"),
+                            FileSystem::getPath("resources/textures/skyboxn/back.jpg"),
+                    };
+            programState->cubemapTexture = loadCubemap(programState->faces);
+        }else {
+            programState->dirLightAmbDiffSpec= glm::vec3(0.25f,0.45f,0.6f);
+            programState->faces = {
+                    FileSystem::getPath("resources/textures/skybox1/right.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/left.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/top.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/bottom.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/front.jpg"),
+                    FileSystem::getPath("resources/textures/skybox1/back.jpg"),
+            };
+            programState->cubemapTexture = loadCubemap(programState->faces);
+        }
+    }
 
     if(programState->camera.Position.y < 100.0f) {
         if (!(lineColision(glm::vec3(-6.8f, 0.0f, -0.2f), glm::vec3(10.8f, 0.0f, -5.0f), programState->camera.Position))
@@ -814,30 +865,23 @@ void DrawImGui(ProgramState *programState) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-
     {
         static float f = 0.0f;
-        ImGui::Begin("Hello window");
-        ImGui::Text("Hello text");
-        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Object position", (float*)&programState->backpackPosition, 0.1);
-        ImGui::DragFloat("Object scale", &programState->backpackScale, 0.005, 0.1, 5.0);
-        ImGui::DragFloat("Object rotate", &programState->objectRotateAngle, 0.5, 0.0, 360.0);
+        ImGui::Begin("Settings");
+        ImGui::Text("Point light settings:");
 
-        ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight.quadratic, 0.05, 0.0, 1.0);
+        ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.005, 0.0001, 1.0);
+        ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.005, 0.0001, 1.0);
+        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight.quadratic, 0.005, 0.0001, 1.0);
 
         ImGui::Text("DirLight settings");
-        ImGui::DragFloat3("Direction light direction", (float*)&programState->dirLightDir, 0.05, -1.0, 1.0);
+        ImGui::DragFloat3("Direction light direction", (float*)&programState->dirLightDir, 0.05, -20.0, 20.0);
 
         ImGui::Text("Ambient    Diffuse    Specular");
         ImGui::DragFloat3("Direction light settings", (float*)&programState->dirLightAmbDiffSpec, 0.05, 0.001, 1.0);
 
-        ImGui::Text("Fine Calibrate");
-        ImGui::DragFloat("FC", &programState->fineCalibrate, 0.05);
+        ImGui::Text("Point Light settings");
+        ImGui::DragFloat3("Point light direction", (float*)&programState->vrctor3, 0.05, -20.0, 20.0);
 
         ImGui::End();
     }
