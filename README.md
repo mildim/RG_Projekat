@@ -7,7 +7,7 @@ Magicni dijamanti koji sluze kao teleport nalaze se u drevnim rimskim gradjevina
 2. CLion -> Open -> path/to/my/project\
 3. Main se nalazi u src/main.cpp\
 4. `ALT`+`SHIFT`+`F10` -> project_base -> run\
-5. `W``A``S``D` za kretanje\
+5. `W` `A` `S` `D` za kretanje\
 6. `f1` -> otvara gui za fina podesavanja.\
 7. `f2` -> ukljucuje i iskljucuje God mode.\
 8. `F` -> ukljucuje i iskljucuje Flashlight.\
@@ -23,6 +23,11 @@ Magicni dijamanti koji sluze kao teleport nalaze se u drevnim rimskim gradjevina
 [Concrete Wall](https://sketchfab.com/3d-models/concrete-wall-6bb6a4c2df1547c79d571ba07c93b18a)\
 [Diamond](https://sketchfab.com/3d-models/round-diamond-57-edges-ab48eeace14742da90d33db62f5231f8)
 
+# Implemented
+
+- [x] Cubemaps
+- [x] HDR 
+- [x] Bloom  
 
 # Autor
 Milan Dimitrijević 307/2018
