@@ -18,7 +18,6 @@ Magicni dijamanti koji sluze kao teleport nalaze se u drevnim rimskim gradjevina
 13. `N` -> Radi promenu izmedju noci i dana.
 
 
-
 # Assets
 
 [Rome buildings](https://sketchfab.com/3d-models/rome-0304c6618b984328a6829d474b6e87b4)\
@@ -32,6 +31,18 @@ Magicni dijamanti koji sluze kao teleport nalaze se u drevnim rimskim gradjevina
 - [x] Cubemaps
 - [x] HDR 
 - [x] Bloom  
+
+# Galerija
+[Video Prezentacija i dodatne slike](https://drive.google.com/drive/folders/1k4V_rJXOkpxQhbAobZYTY77HJHI2MYpo?usp=sharing)\
+![Slika1](./Galerija/1.png)/
+![Slika1](./Galerija/6.png)/
+![Slika1](./Galerija/4.png)/
+![Slika1](./Galerija/9.png)/
+![Slika1](./Galerija/10.png)/
+![Slika1](./Galerija/12.png)/
+![Slika1](./Galerija/15.png)/
+![Slika1](./Galerija/16.png)/
+![Slika1](./Galerija/17.png)/
 
 # Autor
 Milan Dimitrijević 307/2018
